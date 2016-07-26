@@ -2,42 +2,53 @@
 
 /**
  * @file
+ * Theme-specific functions.
  */
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\user\Entity\User;
 
+
 /**
- *
+ * Implements hook_preprocess_html().
  */
 function yorkshire_preprocess_html(&$variables) {
   $variables['skin'] = theme_get_setting('skin');
 }
 
 /**
- *
+ * Implements hook_preprocess_page().
  */
 function yorkshire_preprocess_page(&$variables) {
+  // Prvious code dit not work sometimes, but bug is goofy and hard to
+  // reproduce. So strip code down to get workable solution.
+  $uid = $variables['user']->id();
+  if ($uid) {
 
+    $variables['user'] = [];
+    $variables['user']['uid'] = $uid;
+    $variables['user']['picture'] = NULL;
+    $variables['user']['created'] = NULL;
+  }
 }
 
 /**
- *
+ * Implements hook_preprocess_block().
  */
 function yorkshire_preprocess_block(&$variables) {
   $variables['favicon'] = theme_get_setting('favicon.url');
 }
 
 /**
- *
+ * Implements hook_preprocess_menu().
  */
 function yorkshire_preprocess_menu(&$variables) {
   $icon_setting = explode("\n", theme_get_setting('menu_icons'));
   $icons = [];
-  for ($i = 0; $i < sizeof($icon_setting); $i++) {
+  for ($i = 0; $i < count($icon_setting); $i++) {
     $icon_setting[$i] = explode('|', $icon_setting[$i]);
-    if (array_key_exists($i, $icon_setting) && sizeof($icon_setting[$i]) >= 2) {
+    if (array_key_exists($i, $icon_setting) && count($icon_setting[$i]) >= 2) {
       $icons[$icon_setting[$i][0]] = $icon_setting[$i][1];
     }
   }
@@ -50,7 +61,7 @@ function yorkshire_preprocess_menu(&$variables) {
 }
 
 /**
- *
+ * Implements hook_theme_settings_alter().
  */
 function yorkshire_form_system_theme_settings_alter(&$form, $form_state) {
   $form['skin'] = array(
@@ -81,7 +92,7 @@ function yorkshire_form_system_theme_settings_alter(&$form, $form_state) {
 }
 
 /**
- *
+ * Preprocess breadcrumb.
  */
 function yorkshire_preprocess_breadcrumb(&$variables) {
   if ($variables['breadcrumb']) {
@@ -95,7 +106,7 @@ function yorkshire_preprocess_breadcrumb(&$variables) {
 }
 
 /**
- *
+ * Preprocess local action.
  */
 function yorkshire_preprocess_menu_local_action(&$variables) {
   $link = $variables['element']['#link'];
@@ -115,7 +126,7 @@ function yorkshire_preprocess_menu_local_action(&$variables) {
 }
 
 /**
- *
+ * Implements hook_theme_suggestions_region_alter().
  */
 function yorkshire_theme_suggestions_region_alter(&$suggestions, &$variables) {
   if (in_array("region__content", $suggestions)) {
@@ -128,7 +139,7 @@ function yorkshire_theme_suggestions_region_alter(&$suggestions, &$variables) {
 }
 
 /**
- *
+ * Implements hook-theme_suggestions_block_alter().
  */
 function yorkshire_theme_suggestions_block_alter(&$suggestions, &$variables) {
   if (in_array("block__system_main_block", $suggestions)) {
